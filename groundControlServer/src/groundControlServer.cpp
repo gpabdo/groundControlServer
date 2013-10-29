@@ -12,6 +12,7 @@
 ******************************************************************/
 groundControlServer::groundControlServer()
 {
+	sleep_time = 0;
 	log_list = new linkedList();
 	tx_queue = new linkedList();
 	rx_queue = new linkedList();
@@ -34,6 +35,7 @@ groundControlServer::~groundControlServer()
 ******************************************************************/
 void groundControlServer::start()
 {
+	int sleep_time = 0;
 	cout << "Starting Server" << endl;
 	while( true )
 	{
@@ -49,10 +51,19 @@ void groundControlServer::handleMessages()
 {
 	// Pop out of master queue and route packets to destinations.
 	if(rx_queue->isEmpty())
-		return;
+		sleep_time++;
+	else
+	{
+		message * data = (message*)rx_queue->popFront();	// Get a message from the queue.
+		messageFilter( data );
+		sleep_time = 0;
+	}
 
-	message * data = (message*)rx_queue->popFront();	// Get a message from the queue.
-	messageFilter( data );
+	if(sleep_time > 10)
+	{
+		usleep(100000);
+		sleep_time = 10;
+	}
 }
 
 /******************************************************************

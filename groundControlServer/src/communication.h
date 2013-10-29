@@ -8,8 +8,11 @@
 #ifndef COMMUNICATION_H_
 #define COMMUNICATION_H_
 
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include "Socket.h"
 #include "client.h"
 #include "linkedList.h"
@@ -28,7 +31,7 @@ public:
 	client *findClient(int);
 
 private:
-	void listen();
+	void listener();
 	void send();
 	void txPacket(message*);
 

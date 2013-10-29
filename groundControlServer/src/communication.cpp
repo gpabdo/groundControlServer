@@ -16,7 +16,7 @@ communication::communication(linkedList * tx, linkedList * rx, linkedList * log,
 	tx_queue = tx;
 	rx_queue = rx;
 	log_list = log;
-	clientListiner = new thread(&communication::listen, this);
+	clientListiner = new thread(&communication::listener, this);
 	packetTx = new thread(&communication::send, this);
 }
 
@@ -31,7 +31,7 @@ communication::~communication()
 /******************************************************************
 *
 ******************************************************************/
-void communication::listen()
+void communication::listener()
 {
 	int sd, newSd;
 	sd = socket(AF_INET, SOCK_STREAM, 0);
@@ -47,13 +47,14 @@ void communication::listen()
 	sockaddr_in clientSoc;
 	socklen_t len=sizeof(clientSoc);
 
+	listen(sd, 20);
+
 	while( true )
 	{
 		newSd = accept(sd, (sockaddr *)&clientSoc, &len);
 		client_list->pushToBack( new client(newSd, rx_queue) );
 		close(sd);
-		//read( newSd, buf2, sizeof( buf2 ) );
-	 }
+	}
 
 }
 
@@ -62,10 +63,23 @@ void communication::listen()
 ******************************************************************/
 void communication::send()
 {
+	unsigned int sleep_time = 0;
 	while(true)
 	{
-		if(!tx_queue->isEmpty())
+		if(tx_queue->isEmpty())
+			sleep_time++;
+		else
+		{
+			sleep_time = 0;
 			txPacket( (message*)tx_queue->popFront());
+		}
+
+		if(sleep_time > 10)
+		{
+			usleep(100000);
+			sleep_time = 10;
+		}
+
 	}
 }
 

@@ -28,8 +28,11 @@ private:
 	void handleMessages();
 	void messageFilter(message *);
 	void messageRouter(message *);
+
 	void returnDroneList(message *);
 	void addDrone(message *);
+
+	unsigned int sleep_time;
 
 	linkedList * rx_queue;
 	linkedList * tx_queue;
