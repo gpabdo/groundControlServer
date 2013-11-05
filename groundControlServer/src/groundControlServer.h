@@ -13,6 +13,7 @@
 #include "drone.h"
 #include "communication.h"
 #include <iostream>
+#include <thread>
 using namespace std;
 
 #define MAX_OBJECTS	50
@@ -25,12 +26,15 @@ public:
 
 private:
 	void start();
+	void interface();
 	void handleMessages();
 	void messageFilter(message *);
 	void messageRouter(message *);
 
 	void returnDroneList(message *);
 	void addDrone(message *);
+
+	thread * runner;
 
 	unsigned int sleep_time;
 

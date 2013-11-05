@@ -12,6 +12,7 @@
 ******************************************************************/
 groundControlServer::groundControlServer()
 {
+	cout << "Server initializing" << endl;
 	sleep_time = 0;
 	log_list = new linkedList();
 	tx_queue = new linkedList();
@@ -19,6 +20,7 @@ groundControlServer::groundControlServer()
 	drone_list = new linkedList();
 	client_list = new linkedList();
 	netCom = new communication(tx_queue, rx_queue, log_list, client_list);
+	runner  = new thread(&groundControlServer::interface, this);
 	start();
 }
 
@@ -35,11 +37,37 @@ groundControlServer::~groundControlServer()
 ******************************************************************/
 void groundControlServer::start()
 {
+	cout << "Server started" << endl;
 	int sleep_time = 0;
-	cout << "Starting Server" << endl;
 	while( true )
 	{
 		handleMessages();
+	}
+}
+
+/******************************************************************
+*
+******************************************************************/
+void groundControlServer::interface()
+{
+	cout << "Welcome to Ground Control Server" << endl;
+
+	while( true )
+	{
+		cout << "Build a packet" << endl;
+		cout << "Input destination: ";
+		int dest;
+		cin >> dest;
+
+		cout << "Input command: ";
+		int command;
+		cin >> command;
+
+		cout << "Input value: ";
+		int value;
+		cin >> value;
+
+		rx_queue->pushToBack(new message(0, command, value, dest));
 	}
 }
 
